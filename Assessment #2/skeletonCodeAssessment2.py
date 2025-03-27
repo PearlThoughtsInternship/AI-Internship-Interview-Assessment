@@ -6,7 +6,7 @@ class Doctor:
     def __init__(self, doctor_id, availability_blocks):
         self.doctor_id = doctor_id
         self.queue = []
-        self.availability_blocks = availability_blocks  # Example: [(9, 12), (15, 18)] for shift timing
+        self.availability_blocks = availability_blocks  
     
     def add_patient(self, patient):
         heapq.heappush(self.queue, (patient.priority, patient))
@@ -17,7 +17,6 @@ class Doctor:
         return None
     
     def is_available(self, current_time):
-        # Check if the current time is within any of the doctor's availability blocks
         for start, end in self.availability_blocks:
             if start <= current_time.hour < end:
                 return True
@@ -29,13 +28,12 @@ class Patient:
         self.arrival_time = arrival_time
         self.scheduled_time = scheduled_time
         self.urgency = urgency
-        self.source = source  # 'App', 'Walk-in', 'WhatsApp', etc.
+        self.source = source  
         self.priority = self.calculate_priority()
 
     def calculate_priority(self):
-        # Higher priority for urgent cases, walk-ins may have lower priority
         delay = max(0, (self.arrival_time - self.scheduled_time).seconds // 60)
-        source_priority = 5 if self.source == 'App' else 1  # App-based appointments get higher priority
+        source_priority = 5 if self.source == 'App' else 1  
         return self.urgency * 10 - delay + source_priority
 
 class QueueManagementSystem:
@@ -52,10 +50,9 @@ class QueueManagementSystem:
     def estimate_wait_time(self, doctor_id):
         if doctor_id in self.doctors:
             num_patients = len(self.doctors[doctor_id].queue)
-            avg_consult_time = random.randint(8, 22)  # Simulating doctor-specific consult times
+            avg_consult_time = random.randint(8, 22)  
             return num_patients * avg_consult_time
 
-# Example Usage
 qms = QueueManagementSystem()
 qms.add_doctor(1, [(9, 12), (15, 18)])
 
