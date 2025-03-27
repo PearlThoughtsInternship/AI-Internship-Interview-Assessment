@@ -55,6 +55,7 @@ def create_dataset(dataset, time_step=1):
         dataY.append(dataset[i + time_step, 0])
     return np.array(dataX), np.array(dataY)
 
+#time check
 time_step = 1
 X_arrival, y_arrival = create_dataset(arrival_data, time_step)
 X_arrival = X_arrival.reshape(X_arrival.shape[0], X_arrival.shape[1], 1)
