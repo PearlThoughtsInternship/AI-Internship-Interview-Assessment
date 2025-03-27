@@ -24,6 +24,16 @@ Context: Jayanagar Specialty Clinic in Bangalore sees 300+ patients daily with p
 * Time-slot optimization based on consultation patterns
 * Patient communication strategy for realistic wait time
 
+**Twilio SMS Integration Setup:**
+1. Obtain TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN from Twilio console
+2. Set environment variables:
+```bash
+export TWILIO_ACCOUNT_SID='your_account_sid'
+export TWILIO_AUTH_TOKEN='your_auth_token'
+export TWILIO_PHONE_NUMBER='+1234567890'
+```
+3. System will automatically use these credentials for SMS notifications
+
 # Expected Solution Format :
 
 1. Proposed AI Solution Overview
