@@ -73,10 +73,10 @@ The system tracks:
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ai-patient-communication-system.git
+git clone https://github.com/Gayatri1626/AI-Internship-Interview-Assessment.git
 
 # Navigate to the project directory
-cd ai-patient-communication-system
+cd AI-Internship-Interview-Assessment
 
 # Ensure Python 3.8+ is installed
 python3 --version
