@@ -1,39 +1,76 @@
 import random
+from googletrans import Translator  # Import translation library
 
-# Sample patient database with language and preferred communication channel
+# Function to translate messages based on patient language preference
+def translate_message(message, lang):
+    translator = Translator()
+    return translator.translate(message, dest=lang).text
+
+# Function to send SMS notifications
+def send_sms(patient, message):
+    translated_msg = translate_message(message, patient['language'])
+    print(f"SMS sent to {patient['name']} ({patient['language']}): {translated_msg}")
+
+# Function to send WhatsApp messages
+def send_whatsapp(patient, message):
+    translated_msg = translate_message(message, patient['language'])
+    print(f"WhatsApp message sent to {patient['name']} ({patient['language']}): {translated_msg}")
+
+# Function to make IVR calls
+def send_ivr(patient, message):
+    translated_msg = translate_message(message, patient['language'])
+    print(f"IVR Call made to {patient['name']} ({patient['language']}): {translated_msg}")
+
+# Function to decide which communication channel to use
+def choose_channel(patient):
+    if patient['age'] > 60:
+        return "IVR"  # Elderly patients prefer voice calls
+    elif patient['prefers_whatsapp']:
+        return "WhatsApp"  # Younger patients prefer WhatsApp
+    else:
+        return "SMS"  # Default option
+
+# Function to send appointment reminders based on preferred channel
+def send_appointment_reminder(patient):
+    message = "Reminder: You have an appointment tomorrow at Apollo Clinic."
+    channel = choose_channel(patient)
+    
+    if channel == "SMS":
+        send_sms(patient, message)
+    elif channel == "WhatsApp":
+        send_whatsapp(patient, message)
+    else:
+        send_ivr(patient, message)
+
+# Simulating patient confirmation responses
+def track_confirmation():
+    return random.choice([True, False])  # Randomly simulate patient response
+
+# Function to measure system effectiveness
+def measure_effectiveness(patients):
+    confirmations = sum(track_confirmation() for _ in patients)
+    total_patients = len(patients)
+    confirmation_rate = (confirmations / total_patients) * 100
+    print(f"Confirmation Rate: {confirmation_rate:.2f}%")
+    return confirmation_rate
+
+# Example Patient Data
 patients = [
-    {"id": 1, "name": "Ravi Kumar", "language": "Tamil", "channel": "SMS"},
-    {"id": 2, "name": "Ananya Rao", "language": "Telugu", "channel": "WhatsApp"},
-    {"id": 3, "name": "Joseph Mathew", "language": "Malayalam", "channel": "IVR"},
-    {"id": 4, "name": "Rahul Sharma", "language": "Hindi", "channel": "SMS"},
-    {"id": 5, "name": "David Thomas", "language": "English", "channel": "WhatsApp"},
+    {"name": "Arun", "age": 65, "language": "ta", "prefers_whatsapp": False},
+    {"name": "Suresh", "age": 32, "language": "te", "prefers_whatsapp": True},
+    {"name": "Deepa", "age": 48, "language": "ml", "prefers_whatsapp": False},
+    {"name": "Priya", "age": 39, "language": "hi", "prefers_whatsapp": True},
+    {"name": "Karthik", "age": 56, "language": "en", "prefers_whatsapp": False},
+    {"name": "Meena", "age": 29, "language": "ta", "prefers_whatsapp": True},
+    {"name": "Vikram", "age": 45, "language": "te", "prefers_whatsapp": False},
+    {"name": "Ananya", "age": 50, "language": "ml", "prefers_whatsapp": True},
+    {"name": "Rahul", "age": 41, "language": "hi", "prefers_whatsapp": False},
+    {"name": "Elizabeth", "age": 58, "language": "en", "prefers_whatsapp": True},
 ]
 
-# Predefined multi-language messages
-messages = {
-    "Tamil": "உங்கள் நேரம் உறுதிசெய்யப்பட்டது. தயவுசெய்து வருக!",
-    "Telugu": "మీ నియామకం నిర్ధారించబడింది. దయచేసి రండి!",
-    "Malayalam": "നിങ്ങളുടെ അപോയിന്റ്മെന്റ് സ്ഥിരീകരിച്ചിരിക്കുന്നു. ദയവായി വരൂ!",
-    "Hindi": "आपका अपॉइंटमेंट कन्फर्म हो गया है। कृपया आएं!",
-    "English": "Your appointment is confirmed. Please visit!"
-}
-
-def send_message(patient):
-    """Simulate sending a message based on patient language and preferred channel"""
-    language = patient["language"]
-    message = messages.get(language, messages["English"])  # Default to English if language not found
-    channel = patient["channel"]
-    print(f"📩 Sending via {channel} to {patient['name']} ({language}): {message}")
-
-# Simulating message sending to all patients
+# Sending appointment reminders to all patients
 for patient in patients:
-    send_message(patient)
+    send_appointment_reminder(patient)
 
-# Effectiveness simulation: track confirmations
-def measure_effectiveness():
-    """Simulates confirmation tracking"""
-    confirmed = sum(random.choices([0, 1], k=len(patients)))  # Random confirmations
-    confirmation_rate = (confirmed / len(patients)) * 100
-    print(f"✅ Confirmation Rate: {confirmation_rate:.2f}%")
-
-measure_effectiveness()
+# Measuring and displaying confirmation rate
+measure_effectiveness(patients)
