@@ -15,6 +15,13 @@ class Doctor:
         if self.queue:
             return heapq.heappop(self.queue)[1]
         return None
+    
+    def is_available(self, current_time):
+        # Check if the current time is within any of the doctor's availability blocks
+        for start, end in self.availability_blocks:
+            if start <= current_time.hour < end:
+                return True
+        return False
 
 class Patient:
     def __init__(self, patient_id, arrival_time, scheduled_time, urgency, source):
@@ -28,7 +35,8 @@ class Patient:
     def calculate_priority(self):
         # Higher priority for urgent cases, walk-ins may have lower priority
         delay = max(0, (self.arrival_time - self.scheduled_time).seconds // 60)
-        return self.urgency * 10 - delay
+        source_priority = 5 if self.source == 'App' else 1  # App-based appointments get higher priority
+        return self.urgency * 10 - delay + source_priority
 
 class QueueManagementSystem:
     def __init__(self):
@@ -38,7 +46,7 @@ class QueueManagementSystem:
         self.doctors[doctor_id] = Doctor(doctor_id, availability_blocks)
 
     def assign_patient(self, doctor_id, patient):
-        if doctor_id in self.doctors:
+        if doctor_id in self.doctors and self.doctors[doctor_id].is_available(datetime.now()):
             self.doctors[doctor_id].add_patient(patient)
 
     def estimate_wait_time(self, doctor_id):
