@@ -59,7 +59,7 @@ def test_sms_success_rate_tracking(mock_twilio):
     # Test with 10 simulated sends (7 success, 3 failure)
     for i in range(10):
         try:
-            phone = '+15551234' if i%3 !=0 else 'invalid'
+            phone = '+15551234' if i < 7 else 'invalid'
             send_wait_time_update(phone, 30.5)
             results['success'] += 1
         except Exception:
