@@ -58,3 +58,22 @@ qms.assign_patient(1, patient1)
 qms.assign_patient(1, patient2)
 
 print(f"Estimated wait time for Doctor 1: {qms.estimate_wait_time(1)} minutes")
+def calculate_priority(self):
+    delay = max(0, (self.arrival_time - self.scheduled_time).seconds // 60)
+    return max(1, self.urgency * 10 - delay)  # Ensure priority is always ≥ 1
+def assign_patient_smart(self, patient):
+    best_doctor = min(self.doctors.values(), key=lambda d: len(d.queue), default=None)
+    if best_doctor:
+        best_doctor.add_patient(patient)
+        print(f"Patient {patient.patient_id} assigned to Doctor {best_doctor.doctor_id}")
+    else:
+        print("No available doctors.")
+def estimate_wait_time(self, doctor_id):
+    if doctor_id in self.doctors:
+        num_patients = len(self.doctors[doctor_id].queue)
+        if num_patients == 0:
+            return 0  # No waiting time if queue is empty
+        avg_consult_time = random.randint(8, 22)
+        return num_patients * avg_consult_time
+    return None  # If doctor_id is invalid
+
