@@ -1,0 +1,63 @@
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+
+# Hardcoded data (simulating a dataset)
+appointments = [
+    {"patient_id": 1, "doctor_id": 101, "scheduled_time": 17.00, "actual_time": 17.45, "num_patients": 3},
+    {"patient_id": 2, "doctor_id": 102, "scheduled_time": 17.30, "actual_time": 17.50, "num_patients": 2},
+    {"patient_id": 3, "doctor_id": 103, "scheduled_time": 18.00, "actual_time": 18.20, "num_patients": 4},
+    {"patient_id": 4, "doctor_id": 101, "scheduled_time": 18.30, "actual_time": 19.10, "num_patients": 5},
+]
+
+# Converting data to NumPy arrays
+scheduled_times = np.array([a["scheduled_time"] for a in appointments])
+actual_times = np.array([a["actual_time"] for a in appointments])
+num_patients = np.array([a["num_patients"] for a in appointments])
+
+# Delay Calculation
+delays = actual_times - scheduled_times  # Delay in minutes
+
+# Training Random Forest Model for Delay Prediction
+features = np.column_stack((scheduled_times, num_patients))
+X_train, X_test, y_train, y_test = train_test_split(features, delays, test_size=0.2, random_state=42)
+
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+predictions = rf_model.predict(X_test)
+print("📌 Mean Absolute Error:", mean_absolute_error(y_test, predictions))
+
+# LSTM Model for Patient Flow Prediction
+X_lstm = features.reshape(-1, 1, 2)
+y_lstm = num_patients.reshape(-1, 1)
+
+model = Sequential([
+    LSTM(50, activation='relu', input_shape=(1, 2)),
+    Dense(1)
+])
+model.compile(optimizer='adam', loss='mse')
+model.fit(X_lstm, y_lstm, epochs=10, verbose=1)
+
+# Real-time Slot Allocation (Simulated)
+doctor_availability = {101: True, 102: False, 103: True}
+
+def dynamic_slot_allocation():
+    available_doctors = [doc for doc, available in doctor_availability.items() if available]
+    if not available_doctors:
+        return "No slots available"
+    return np.random.choice(available_doctors)
+
+# Handling Early Arrivals
+def handle_early_arrival(patient_id, arrival_time):
+    patient = next((p for p in appointments if p["patient_id"] == patient_id), None)
+    if not patient:
+        return "Patient not found"
+
+    if arrival_time < patient["scheduled_time"]:
+        return dynamic_slot_allocation()
+    return "Wait for your scheduled slot"
+
+print("✅ AI System Ready for Scheduling Without CSV!")
