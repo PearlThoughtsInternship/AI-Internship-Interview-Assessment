@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyd
+*.pyo
+*.so
+.Python
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local data
+*.csv
+*.data
+*.sqlite
+
+# Environment files
+.env
+.env.local
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Test outputs
+.pytest_cache/
+test-reports/
+
+# Windows
+Thumbs.db
+[Dd]esktop.ini
