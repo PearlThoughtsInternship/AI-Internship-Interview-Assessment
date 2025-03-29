@@ -1,39 +1,58 @@
-# AI Internship-Interview Assessment Repository
+ 
+# AI-Based Patient Wait Time Prediction
 
-This repository contains assessments for the AI Internship. There are 4 main assessments and one demo that serves as a guide.
+This project predicts patient wait times using Random Forest Regression.
 
-📌 Structure of the Repository
+## Features
+- Predicts patient wait time based on doctor, time, and day.
+- Helps in scheduling to minimize waiting.
+- Trained using historical appointment data.
 
-Assessment #1 - Managing Peak Hour Patient Flow at Urban Multi-Specialty Clinic
+## Requirements
+Ensure you have the following installed:
+- Python 3.10+
+- Pandas
+- NumPy
+- Scikit-Learn
 
-Assessment #2 - Scenario-Based Assessment
+### Install dependencies:
 
-Assessment #3 - App-Based Simulation Tasks
+pip install -r requirements.txt
 
-Assessment #4 - Multi-Language Patient Communication System
+## How to Run:
 
-Assessment #Demo - Use this as a reference for completing other assessments.
+Clone the repository:
 
-🚀 How to Use This Repository
-1. Clone the repository:
+git clone https://github.com/Madhukarrao19/AI-Internship-Assessment.git
 
-   git clone https://github.com/PearlThoughtsInternship/AI-Internship-Interview-Assessment.git
+Navigate to the project directory:
 
-2. Navigate to the respective assessment folder.
+cd AI-Internship-Assessment
 
-3. Read the README.md inside each assessment folder for detailed instructions.
+## Run the script:
+python patient_flow.py
 
-4. Complete the task, test your code, and create a Pull Request (PR).
+Updating the Code in Git
 
+Stage the changes:
 
-📤 Submission Process
+git add .
 
-1. **Fork the repository.**
+Commit the changes:
+git commit -m "Updated Patient Flow Optimization"
 
-2. **Solve any one assessment of your choice.**
+Push the updates:
 
-3. **Create a pull request (PR) in your forked repository.**
+git push origin my-assessment-solution
 
-4. **Share the PR link along with your interview application form.**
+## Expected Output
+Mean Absolute Error (MAE) for wait time prediction
+Expected patient wait time in minutes
 
+## Add and Push to GitHub  
 
+Run the following in *cmd*:
+
+git add .
+git commit -m "Updated Patient Flow Optimization"
+git push -u origin my-assessment-solution
