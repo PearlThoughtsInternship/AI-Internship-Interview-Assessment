@@ -1,0 +1,115 @@
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+from datetime import datetime, timedelta
+
+# Load appointment data
+df = pd.read_csv("appointments.csv")  # Contains scheduled_time, actual_time, doctor_id, patient_id
+""" 
+As we don't have CSV file right now, we can create list or dictionary to temporary handle this situation.
+"""
+
+# Feature Engineering
+df['delay'] = (pd.to_datetime(df['actual_time']) - pd.to_datetime(df['scheduled_time'])).dt.total_seconds() / 60
+df['hour'] = pd.to_datetime(df['scheduled_time']).dt.hour
+df['day_of_week'] = pd.to_datetime(df['scheduled_time']).dt.dayofweek
+
+df = df.dropna()  # Remove missing values if any
+
+# Define features and target variable
+features = ['doctor_id', 'hour', 'day_of_week']
+target = 'delay'
+
+# Train AI Model
+X = df[features]
+y = df[target]
+
+# Split into training and testing data
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train Random Forest model
+model = RandomForestRegressor(n_estimators=50, random_state=42)  # 50 trees for balance between speed & accuracy
+model.fit(X, y)
+
+# Evaluating model
+y_pred = model.predict(X_test)
+mae = mean_absolute_error(y_test, y_pred)
+print(f"Mean Absolute Error on test set: {mae:.2f} minutes")
+
+# Predict delay for future appointments
+def predict_wait_time(doctor_id, scheduled_time):
+    hour = scheduled_time.hour
+    day_of_week = scheduled_time.weekday()
+    return model.predict([[doctor_id, hour, day_of_week]])[0]  # Predicted delay in minutes
+
+# Predictive load balancing across available doctors
+def balance_doctor_load(scheduled_time):
+    doctor_wait_times = {}
+    for doctor_id in doctor_list:  # Assuming doctor_list contains all active doctor IDs
+        predicted_delay = predict_wait_time(doctor_id, scheduled_time)
+        doctor_wait_times[doctor_id] = predicted_delay
+
+    # Choose the doctor with the least predicted wait time
+    best_doctor = min(doctor_wait_times, key=doctor_wait_times.get)
+
+    print(f"Patient assigned to Doctor {best_doctor} (Lowest predicted wait:{doctor_wait_times[best_doctor]:.2f} mins)")
+    return best_doctor  # Assign patient to the least busy doctor    
+
+# Dynamic slot allocation
+def allocate_time_slot(doctor_id, scheduled_time):
+    predicted_delay = predict_wait_time(doctor_id, scheduled_time)
+    adjusted_time = scheduled_time + timedelta(minutes=predicted_delay)
+    return adjusted_time  # New adjusted appointment time
+
+# Handle early arrivals
+def handle_early_arrival(patient_id, scheduled_time, actual_arrival_time):
+    minutes_early = (scheduled_time - actual_arrival_time).total_seconds() / 60
+    
+    # Check for no-shows or available doctors
+    available_slots = check_available_slots()  # This would be implemented in the real system
+    if available_slots and minutes_early > 15:
+        return "You arrived early. We can accommodate you in the next available slot."
+    elif minutes_early > 30:
+        return f"You're {int(minutes_early)} minutes early. Please complete paperwork and wait to be called."
+    else:
+        # Calculate expected actual wait time
+        expected_wait = max(5, minutes_early - 10)  # Simple heuristic
+        return f"You're {int(minutes_early)} minutes early. Estimated wait time is {int(expected_wait)} minutes."
+
+# Patient communication strategy for realistic wait time
+def send_wait_time_update(patient_id, doctor_id, scheduled_time):
+    predicted_delay = predict_wait_time(doctor_id, scheduled_time)
+    expected_time = scheduled_time + timedelta(minutes=predicted_delay)
+    message = (f"Dear Patient {patient_id}, your estimated consultation time with "
+               f"Doctor {doctor_id} is now {expected_time.strftime('%I:%M %p')}. "
+               f"Thank you for your patience!")
+    
+    # Simulate sending SMS (replace with actual API call)
+    print(f"SMS Sent: {message}")  
+    return message   
+    
+
+""" 
+1. Reduce wait-time by 30%
+
+- As we know expected wait time, now we can add reschedulling option.
+- We can notify patients about actual wait times via SMS/Call 
+(For this we can implement Agentic AI, to automate SMS/Call)
+
+
+2. Key Predictive Features:
+
+1. Consultation Duration: Like how much approx time each doctor is taking.
+2. Days of week and Festival or Holiday effect.
+3. Walk-In Probability: People can directly come to clinic without any appointment, 
+   so we have to handle that too, with our online booking.
+
+
+3. Handling Early-Arriving Patients.
+
+- Give priority based on consultation gaps.
+- If doctor has an early gap(Due to no-show/Quick check-up), AI can auto-adjust and fit early arrivals.
+- We can also give 'Priority Score' based on wait-time and urgency. 
+
+"""
