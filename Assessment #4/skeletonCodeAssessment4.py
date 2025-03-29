@@ -1,4 +1,6 @@
 import random
+from gtts import gTTS  # Google Text-to-Speech for IVR
+import os
 
 # Sample patient database with language and preferred communication channel
 patients = [
@@ -23,17 +25,29 @@ def send_message(patient):
     language = patient["language"]
     message = messages.get(language, messages["English"])  # Default to English if language not found
     channel = patient["channel"]
-    print(f"📩 Sending via {channel} to {patient['name']} ({language}): {message}")
+    
+    if channel == "IVR":
+        generate_voice_message(message, patient)
+    else:
+        print(f"Sending via {channel} to {patient['name']} ({language}): {message}")
+
+def generate_voice_message(message, patient):
+    """Convert text message to speech for IVR"""
+    tts = gTTS(text=message, lang='ta' if patient["language"] == "Tamil" else 'en')
+    filename = f"ivr_message_{patient['id']}.mp3"
+    tts.save(filename)
+    print(f"📞 IVR call to {patient['name']} in {patient['language']} - Playing {filename}")
 
 # Simulating message sending to all patients
 for patient in patients:
     send_message(patient)
 
-# Effectiveness simulation: track confirmations
 def measure_effectiveness():
-    """Simulates confirmation tracking"""
-    confirmed = sum(random.choices([0, 1], k=len(patients)))  # Random confirmations
+    """Track confirmations and perform A/B testing"""
+    confirmed = sum(random.choices([0, 1], k=len(patients)))  # Simulating confirmations
     confirmation_rate = (confirmed / len(patients)) * 100
-    print(f"✅ Confirmation Rate: {confirmation_rate:.2f}%")
+    print(f"Confirmation Rate: {confirmation_rate:.2f}%")
+    return confirmation_rate
 
+# Measure effectiveness
 measure_effectiveness()
