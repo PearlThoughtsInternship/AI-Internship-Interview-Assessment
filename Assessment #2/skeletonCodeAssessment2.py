@@ -1,6 +1,7 @@
 import heapq
 from datetime import datetime, timedelta
 import random
+import time
 
 class Doctor:
     def __init__(self, doctor_id, availability_blocks,accepts_walkins=False):
