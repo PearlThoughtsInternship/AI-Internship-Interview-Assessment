@@ -6,6 +6,7 @@ patients = [
     {"id": 2, "name": "Ananya Rao", "language": "Telugu", "channel": "WhatsApp"},
     {"id": 3, "name": "Joseph Mathew", "language": "Malayalam", "channel": "IVR"},
     {"id": 4, "name": "Rahul Sharma", "language": "Hindi", "channel": "SMS"},
+    {"id": 6, "name": "Meghana R", "language": "Kannada", "channel": "SMS"},
     {"id": 5, "name": "David Thomas", "language": "English", "channel": "WhatsApp"},
 ]
 
@@ -15,6 +16,7 @@ messages = {
     "Telugu": "మీ నియామకం నిర్ధారించబడింది. దయచేసి రండి!",
     "Malayalam": "നിങ്ങളുടെ അപോയിന്റ്മെന്റ് സ്ഥിരീകരിച്ചിരിക്കുന്നു. ദയവായി വരൂ!",
     "Hindi": "आपका अपॉइंटमेंट कन्फर्म हो गया है। कृपया आएं!",
+    "Kannada": "ನಿಮ್ಮ ಭೇಟಿಯು ಖಚಿತವಾಗಿದೆ. ದಯವಿಟ್ಟು ಆಗಮಿಸಿ!",
     "English": "Your appointment is confirmed. Please visit!"
 }
 
